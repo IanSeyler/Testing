@@ -1,4 +1,4 @@
-// gcc -o syscall_bench syscall_bench.c -lrt
+// gcc -o getpid_bench getpid_bench.c -lrt
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,7 +12,7 @@ int main()
 	long long min_ns = 0;
 	long long max_ns = 0;
 
-	printf("Starting benchmark...\n");
+	printf("Starting benchmark of getpid()...\n");
 
 	for (int i = 0; i < iterations; i++)
 	{
