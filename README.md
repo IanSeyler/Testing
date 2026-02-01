@@ -1,5 +1,7 @@
 Testing repo
 
+# Linux
+
 ## syscall_test (getpid)
 
 ### Physical
@@ -66,4 +68,18 @@ recvfrom() returned NO PACKET (EAGAIN): count=989054
  Min=90 ns
  Max=181300 ns
  Avg=102.48 ns
+```
+
+# BareMetal
+
+## sys_test
+
+### Physical
+
+- Intel i5-1135G7 @ 2.40GHz
+- 64.0 GiB RAM
+- BareMetal 2026.01
+
+```
+32 ns
 ```
