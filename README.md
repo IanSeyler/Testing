@@ -2,7 +2,7 @@ Testing repo
 
 # Linux
 
-## syscall_test (getpid)
+## syscall test - `getpid_bench.c`
 
 ### Physical
 
@@ -30,7 +30,7 @@ Max: 35598 ns
 Average: 76.75 ns
 ```
 
-## ethernet_test
+## ethernet test - `ethernet_bench.c`
 
 ### Physical
 
@@ -72,7 +72,7 @@ recvfrom() returned NO PACKET (EAGAIN): count=989054
 
 # BareMetal
 
-## sys_test
+## syscall test - `sys_test.asm`
 
 ### Physical
 
