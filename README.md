@@ -76,7 +76,7 @@ recvfrom() returned NO PACKET (EAGAIN): count=989054
 
 ### Physical
 
-- Intel i5-1135G7 @ 2.40GHz
+- 11th Gen Intel® Core™ i5-1135G7 × 8
 - 64.0 GiB RAM
 - BareMetal 2026.01
 
