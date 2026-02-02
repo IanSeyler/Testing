@@ -38,7 +38,7 @@ Average: 76.75 ns
 - Framework Laptop
 - 11th Gen Intel® Core™ i5-1135G7 × 8
 - 64.0 GiB RAM
-- BareMetal 2026.01
+- Ubuntu 25.10
 
 #### Physical
 
@@ -126,6 +126,8 @@ recvfrom() returned NO PACKET (EAGAIN): count=989392
 ```
 
 #### Virtual
+
+Specs as above
 
 ```
 Iterations: 1000000 (warmup excluded: 10000)
