@@ -4,11 +4,14 @@ Testing repo
 
 ## syscall test - `getpid_bench.c`
 
-### Physical
+### System 1
 
+- Framework Desktop
 - AMD RYZEN AI MAX+ 395 w/ Radeon™ 8060S × 32
 - 128.0 GiB RAM
 - Ubuntu 25.10
+
+#### Physical
 
 ```
 Iterations: 1000000
@@ -17,7 +20,7 @@ Max: 32932 ns
 Average: 72.01 ns
 ```
 
-### Virtual
+#### Virtual
 
 - Via KVM on physical host
 - 4.0 GiB RAM
@@ -32,9 +35,11 @@ Average: 76.75 ns
 
 ## ethernet test - `ethernet_bench.c`
 
-### Physical
+### System 1
 
 Specs as above
+
+#### Physical
 
 ```
 Iterations: 1000000 (warmup excluded: 10000)
@@ -51,7 +56,7 @@ recvfrom() returned NO PACKET (EAGAIN): count=987225
  Avg=141.66 ns
 ```
 
-### Virtual
+#### Virtual
 
 Specs as above
 
@@ -74,11 +79,14 @@ recvfrom() returned NO PACKET (EAGAIN): count=989054
 
 ## syscall test - `sys_test.asm`
 
-### Physical
+### System 2
 
+- Framework Laptop
 - 11th Gen Intel® Core™ i5-1135G7 × 8
 - 64.0 GiB RAM
 - BareMetal 2026.01
+
+### Physical
 
 ```
 32 ns
