@@ -33,6 +33,35 @@ Max: 35598 ns
 Average: 76.75 ns
 ```
 
+### System 2
+
+- Framework Laptop
+- 11th Gen Intel® Core™ i5-1135G7 × 8
+- 64.0 GiB RAM
+- BareMetal 2026.01
+
+#### Physical
+
+```
+Iterations: 1000000
+Min: 0 ns
+Max: 54742 ns
+Average: 301.41 ns
+```
+
+#### Virtual
+
+- Via KVM on physical host
+- 4.0 GiB RAM
+- Ubuntu 25.10
+
+```
+Iterations: 1000000
+Min: 0 ns
+Max: 43831 ns
+Average: 324.15 ns
+```
+
 ## ethernet test - `ethernet_bench.c`
 
 ### System 1
@@ -75,6 +104,28 @@ recvfrom() returned NO PACKET (EAGAIN): count=989054
  Avg=102.48 ns
 ```
 
+### System 2
+
+Specs as above
+
+#### Physical
+
+```
+Iterations: 1000000 (warmup excluded: 10000)
+Buffer: 2048 bytes
+Total bytes read (successful): 646721
+Other errors (excluded from stats): 0
+recvfrom() returned PACKET: count=608
+ Min=1288 ns
+ Max=8239 ns
+ Avg=2681.97 ns
+recvfrom() returned NO PACKET (EAGAIN): count=989392
+ Min=412 ns
+ Max=26648 ns
+ Avg=488.27 ns
+```
+
+
 # BareMetal
 
 ## syscall test - `sys_test.asm`
@@ -86,7 +137,7 @@ recvfrom() returned NO PACKET (EAGAIN): count=989054
 - 64.0 GiB RAM
 - BareMetal 2026.01
 
-### Physical
+#### Physical
 
 ```
 32 ns
