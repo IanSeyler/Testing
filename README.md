@@ -125,6 +125,22 @@ recvfrom() returned NO PACKET (EAGAIN): count=989392
  Avg=488.27 ns
 ```
 
+#### Virtual
+
+```
+Iterations: 1000000 (warmup excluded: 10000)
+Buffer: 2048 bytes
+Total bytes read (successful): 467760
+Other errors (excluded from stats): 0
+recvfrom() returned PACKET: count=429
+ Min=1349 ns
+ Max=14551 ns
+ Avg=1976.63 ns
+recvfrom() returned NO PACKET (EAGAIN): count=989571
+ Min=449 ns
+ Max=133626 ns
+ Avg=492.44 ns
+```
 
 # BareMetal
 
