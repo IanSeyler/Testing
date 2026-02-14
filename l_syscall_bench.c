@@ -19,8 +19,11 @@ int main()
         	// Record start time
 		clock_gettime(CLOCK_MONOTONIC, &start);
 
+/* Code to benchmark */
 		// Call a kernel function
-		getpid();
+//		getpid();
+		// __asm__ volatile ("nop");
+		__asm__ volatile ("cpuid");
 
 		// Record end time
 		clock_gettime(CLOCK_MONOTONIC, &end);

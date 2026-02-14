@@ -11,8 +11,7 @@ DEFAULT ABS
 
 start:					; Start of program label
 	lea rsi, [rel msg_start]
-	mov ecx, 23
-	call [b_output]
+	call output
 
 	; Gather timer to timer delay
 	mov ecx, TIMECOUNTER
@@ -36,13 +35,15 @@ loop1:
 ;-------------------------
 ; Code to benchmark
 ;-------------------------
-	mov ecx, FREE_MEMORY
-	call [b_system]
+;	mov ecx, FREE_MEMORY
+;	call [b_system]
 ;-------------------------
 ;	call [b_net_rx]
 ;	add r13, rcx
 ;-------------------------
-;	cpuid
+	cpuid
+;-------------------------
+;	nop
 ;-------------------------
 
 	; Gather end time of iteration
@@ -56,7 +57,7 @@ loop1:
 
 	; Calculate elapsed time
 	sub r9, r8			; end time (t1) - start time (t0)
-	sub r9, r10			; subtract timer delay calculated earlier
+;	sub r9, r10			; subtract timer delay calculated earlier
 
 	add r14, r9			; Add elapsed time to cumulative time
 	dec r12				; Decrement iterations counter
@@ -69,16 +70,102 @@ loop1:
 	mov ecx, 1000000
 	div rcx				; RDX:RAX / RCX (quotient in RAX, remainder in RDX)
 
-	ud2				; Dump registers
+;	ud2				; Dump registers
+
+	lea rsi, [rel msg_avg]
+	call output
+	mov rdi, msg_val
+	call os_int_to_string
+	mov rsi, msg_val
+	call output
+	lea rsi, [rel msg_ns]
+	call output
 
 	ret
 
 error:
 	lea rsi, [rel msg_err]
-	mov ecx, 3
-	call [b_output]
+	call output
 	ud2				; Dump registers
 	ret				; Return to OS
 
-msg_start: db "Starting benchmark...", 13, 10,0
+
+; -----------------------------------------------------------------------------
+; os_int_to_string -- Convert a binary integer into an string
+;  IN:	RAX = binary integer
+;	RDI = location to store string
+; OUT:	RDI = points to end of string
+;	All other registers preserved
+; Min return value is 0 and max return value is 18446744073709551615 so the
+; string needs to be able to store at least 21 characters (20 for the digits
+; and 1 for the string terminator).
+; Adapted from http://www.cs.usfca.edu/~cruse/cs210s09/rax2uint.s
+os_int_to_string:
+	push rdx
+	push rcx
+	push rbx
+	push rax
+
+	mov rbx, 10					; base of the decimal system
+	xor ecx, ecx					; number of digits generated
+os_int_to_string_next_divide:
+	xor edx, edx					; RAX extended to (RDX,RAX)
+	div rbx						; divide by the number-base
+	push rdx					; save remainder on the stack
+	inc rcx						; and count this remainder
+	test rax, rax					; was the quotient zero?
+	jnz os_int_to_string_next_divide		; no, do another division
+
+os_int_to_string_next_digit:
+	pop rax						; else pop recent remainder
+	add al, '0'					; and convert to a numeral
+	stosb						; store to memory-buffer
+	loop os_int_to_string_next_digit		; again for other remainders
+	xor al, al
+	stosb						; Store the null terminator at the end of the string
+
+	pop rax
+	pop rbx
+	pop rcx
+	pop rdx
+	ret
+; -----------------------------------------------------------------------------
+
+; -----------------------------------------------------------------------------
+; os_string_length -- Return length of a string
+;  IN:	RSI = string location
+; OUT:	RCX = length (not including the NULL terminator)
+;	All other registers preserved
+os_string_length:
+	push rdi
+	push rax
+
+	xor ecx, ecx
+	xor eax, eax
+	mov rdi, rsi
+	not rcx
+	cld
+	repne scasb			; compare byte at RDI to value in AL
+	not rcx
+	dec rcx
+
+	pop rax
+	pop rdi
+	ret
+; -----------------------------------------------------------------------------
+
+; -----------------------------------------------------------------------------
+output:
+	push rcx
+	call os_string_length
+	call [b_output]
+	pop rcx
+	ret
+; -----------------------------------------------------------------------------
+
+
+msg_start: db "Starting benchmark...", 13, 10, 13, 10, 0
+msg_avg: db "Average time: ", 0
+msg_ns: db " ns", 0
 msg_err: db "err", 0
+msg_val: db 0
