@@ -4,75 +4,81 @@
 ; BareMetal compile:
 ; nasm sys_test.asm -o sys_test.app
 
-
 [BITS 64]
 DEFAULT ABS
 
 %INCLUDE "libBareMetal.asm"
 
 start:					; Start of program label
-	mov eax, 0x80000007
-	cpuid
-	bt edx, 8			; Check for invariant tsc
-	jnc error
-	mov eax, 0x15
-	cpuid
-	cmp ecx, 0
-	je error
-	;tsc_hz = ECX * EBX / EAX
-	push rax
-	mov eax, ecx
-	mul rbx				; RDX:RAX = RAX * RBX
-	pop rcx
-	div rcx				; RDX:RAX / RCX
-	; RAX contains TSC Hz		; On Framework 13 0x90321000 (2419200000 aka 2419.2 MHz)
-	mov r12, rax			; tsc_hz
+	lea rsi, [rel msg_start]
+	mov ecx, 23
+	call [b_output]
 
-	; Benchmark end-to-end TSC reads
-	rdtscp
-	shl rdx, 32
-	add rax, rdx
-	mov r10, rax			; R10 = T0 (Start)
-	rdtscp
-	shl rdx, 32
-	add rax, rdx
-	mov r11, rax			; R11 = T1 (end)
-	sub rax, r10
-	mov r9, rax			; R9 = T1 - T0
-
-	; Convert to ns
-	xor edx, edx
-        mov rbx, 1000000000
-        mul rbx                         ; RDX:RAX = RAX * RBX
-        div r12                         ; RAX = RDX:RAX / R12
-	mov r8, rax			; R8 = R9 (nanoseconds)
-
-	rdtscp
-	shl rdx, 32
-	add rax, rdx
-	mov r14, rax
-
-	; code to test
-	mov ecx, FREE_MEMORY
-        call [b_system]
-
-        rdtscp
-        shl rdx, 32
-        add rax, rdx
-        mov r15, rax
-	sub rax, r14
-
-	xor edx, edx
-	mov rbx, 1000000000
-	mul rbx				; RDX:RAX = RAX * RBX
-	div r12				; RAX = RDX:RAX / R12
-
-	; Calculate timer difference in nanoseconds
-	sub rax, r8			; Subtract latency of timer call
-	mov ecx, DUMP_RAX
+	; Gather timer to timer delay
+	mov ecx, TIMECOUNTER
 	call [b_system]
+	mov r8, rax
+	call [b_system]
+	mov r9, rax
+	mov r15, rax
+	sub r15, r8			; R10 contains timer to timer delay
 
-	; Dump registers
-	ud2
+	mov r12, 1000000		; Iterations
+	xor r14, r14			; Cumulative time
+	xor r13, r13			; Bytes counter (for network test)
+
+loop1:
+	; Gather start time of iteration
+	mov ecx, TIMECOUNTER
+	call [b_system]
+	mov r8, rax			; t0
+
+;-------------------------
+; Code to benchmark
+;-------------------------
+	mov ecx, FREE_MEMORY
+	call [b_system]
+;-------------------------
+;	call [b_net_rx]
+;	add r13, rcx
+;-------------------------
+;	cpuid
+;-------------------------
+
+	; Gather end time of iteration
+	mov ecx, TIMECOUNTER
+	call [b_system]
+	mov r9, rax			; t1
+
+	; Check for start time > end time
+	cmp r9, r8			; t0 > t1?
+	jb error
+
+	; Calculate elapsed time
+	sub r9, r8			; end time (t1) - start time (t0)
+	sub r9, r10			; subtract timer delay calculated earlier
+
+	add r14, r9			; Add elapsed time to cumulative time
+	dec r12				; Decrement iterations counter
+	cmp r12, 0			; 0 yet?
+	jne loop1			; If not, continue loop
+
+	; Divide cumulative time by iterations
+	xor edx, edx
+	mov rax, r14
+	mov ecx, 1000000
+	div rcx				; RDX:RAX / RCX (quotient in RAX, remainder in RDX)
+
+	ud2				; Dump registers
+
+	ret
+
 error:
+	lea rsi, [rel msg_err]
+	mov ecx, 3
+	call [b_output]
+	ud2				; Dump registers
 	ret				; Return to OS
+
+msg_start: db "Starting benchmark...", 13, 10,0
+msg_err: db "err", 0

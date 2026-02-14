@@ -8,15 +8,13 @@ Testing repo
 
 - Framework Desktop
 - AMD RYZEN AI MAX+ 395 w/ Radeon™ 8060S × 32
-- 128.0 GiB RAM
+- 128.0 GiB RAM
 - Ubuntu 25.10
 
 #### Physical
 
 ```
 Iterations: 1000000
-Min: 0 ns
-Max: 32932 ns
 Average: 72.01 ns
 ```
 
@@ -28,8 +26,6 @@ Average: 72.01 ns
 
 ```
 Iterations: 1000000
-Min: 0 ns
-Max: 35598 ns
 Average: 76.75 ns
 ```
 
@@ -37,15 +33,13 @@ Average: 76.75 ns
 
 - Framework Laptop
 - 11th Gen Intel® Core™ i5-1135G7 × 8
-- 64.0 GiB RAM
+- 64.0 GiB RAM
 - Ubuntu 25.10
 
 #### Physical
 
 ```
 Iterations: 1000000
-Min: 0 ns
-Max: 54742 ns
 Average: 301.41 ns
 ```
 
@@ -57,8 +51,6 @@ Average: 301.41 ns
 
 ```
 Iterations: 1000000
-Min: 0 ns
-Max: 43831 ns
 Average: 324.15 ns
 ```
 
@@ -152,7 +144,7 @@ recvfrom() returned NO PACKET (EAGAIN): count=989571
 
 - Framework Laptop
 - 11th Gen Intel® Core™ i5-1135G7 × 8
-- 64.0 GiB RAM
+- 64.0 GiB RAM
 - BareMetal 2026.01
 
 #### Physical
