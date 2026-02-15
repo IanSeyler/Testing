@@ -131,9 +131,54 @@ Specs:
 - [AMD Ryzen 7 7700X](https://www.amd.com/en/products/processors/desktops/ryzen/7000-series/amd-ryzen-7-7700x.html) - Zen 4 (Raphael) - 8 cores, base 4.50GHz, boost 5.40GHz
 - [ASUS PRIME B650M-A II](https://www.asus.com/motherboards-components/motherboards/csm/prime-b650m-a-ii-csm/)
 - 16GiB RAM (1x 16GiB DDR5) - Max 128GiB
-- Intel 10Gbit network card (Nicgigga?)
+- Intel X540-T1 10Gbit network card (NICGIGA)
+- Internal 2.5Gbit NIC disabled in BIOS
 
-## Linux (Ubuntu 25.10)
+## l_bench / b_bench
 
-## BareMetal (2026.01)
+### Linux (Ubuntu 25.10)
 
+```
+ian@amd:~/Code/Testing$ ./l_bench
+Starting benchmark...
+
+--- Results ---
+Iterations: 1000000
+Average: 41.39 ns
+ian@amd:~/Code/Testing$ ./l_bench
+Starting benchmark...
+
+--- Results ---
+Iterations: 1000000
+Average: 41.54 ns
+ian@amd:~/Code/Testing$ ./l_bench
+Starting benchmark...
+
+--- Results ---
+Iterations: 1000000
+Average: 41.35 ns
+ian@amd:~/Code/Testing$
+```
+
+### BareMetal (2026.01)
+
+## l_ethernet_bench / b_ethernet_bench
+
+```
+ian@amd:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1010000
+...
+recvfrom() returned PACKET: count=0
+recvfrom() returned NO_PACKET (EAGAIN): count=1000000
+ Avg=408.72 ns
+ian@amd:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1010000
+...
+recvfrom() returned PACKET: count=0
+recvfrom() returned NO_PACKET (EAGAIN): count=1000000
+ Avg=408.15 ns
+ian@amd:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1010000
+...
+recvfrom() returned PACKET: count=0
+recvfrom() returned NO_PACKET (EAGAIN): count=1000000
+ Avg=407.65 ns
+ian@amd:~/Code/Testing$
+```
