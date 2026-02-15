@@ -13,6 +13,9 @@ start:					; Start of program label
 	lea rsi, [rel msg_start]
 	call output
 
+	; Number of iterations
+	mov r11, 1000000
+
 	; Gather timer to timer delay
 	mov ecx, TIMECOUNTER
 	call [b_system]
@@ -22,7 +25,7 @@ start:					; Start of program label
 	mov r15, rax
 	sub r15, r8			; R10 contains timer to timer delay
 
-	mov r12, 1000000		; Iterations
+	mov r12, r11			; Iterations
 	xor r14, r14			; Cumulative time
 	xor r13, r13			; Bytes counter (for network test)
 
@@ -41,6 +44,8 @@ loop1:
 ;	call [b_net_rx]
 ;	add r13, rcx
 ;-------------------------
+	xor eax, eax
+	xor ecx, ecx
 	cpuid
 ;-------------------------
 ;	nop
@@ -67,13 +72,21 @@ loop1:
 	; Divide cumulative time by iterations
 	xor edx, edx
 	mov rax, r14
-	mov ecx, 1000000
+	mov rcx, r11
 	div rcx				; RDX:RAX / RCX (quotient in RAX, remainder in RDX)
+	push rax
 
 ;	ud2				; Dump registers
-
+	lea rsi, [rel msg_result]
+	call output
+	mov rax, r11
+	mov rdi, msg_val
+	call os_int_to_string
+	mov rsi, msg_val
+	call output
 	lea rsi, [rel msg_avg]
 	call output
+	pop rax
 	mov rdi, msg_val
 	call os_int_to_string
 	mov rsi, msg_val
@@ -165,7 +178,8 @@ output:
 
 
 msg_start: db "Starting benchmark...", 13, 10, 13, 10, 0
-msg_avg: db "Average time: ", 0
+msg_result: db "--- Results ---",13, 10, "Iterations: ", 0
+msg_avg: db 13, 10, "Average time: ", 0
 msg_ns: db " ns", 0
 msg_err: db "err", 0
 msg_val: db 0

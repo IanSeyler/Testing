@@ -9,21 +9,28 @@ int main()
 	const int iterations = 1000000;
 	struct timespec start, end;
 	long long total_ns = 0;
-//	long long min_ns = 0;
-//	long long max_ns = 0;
 
-	printf("Starting benchmark of syscall getpid()...\n");
+	printf("Starting benchmark...\n");
 
 	for (int i = 0; i < iterations; i++)
 	{
         	// Record start time
 		clock_gettime(CLOCK_MONOTONIC, &start);
 
+//-------------------------
 /* Code to benchmark */
 		// Call a kernel function
 //		getpid();
 		// __asm__ volatile ("nop");
-		__asm__ volatile ("cpuid");
+		__asm__ volatile (
+			"xor %%eax, %%eax;"
+			"xor %%ecx, %%ecx;"
+			"cpuid"
+			:
+			:
+			: "%eax", "%ecx"
+		);
+		//-------------------------
 
 		// Record end time
 		clock_gettime(CLOCK_MONOTONIC, &end);
@@ -33,10 +40,6 @@ int main()
 
 		// Update statistics
 		total_ns += delta;
-//		if (delta < min_ns)
-//			min_ns = delta;
-//		if (delta > max_ns)
-//			max_ns = delta;
 	}
 
 	// Calculate average
