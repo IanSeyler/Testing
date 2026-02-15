@@ -76,6 +76,8 @@ Executing relevant function for reading Ethernet packets.
 
 ### Linux (Ubuntu 25.10)
 
+Testing was done against the `virtio-net-pci` interface (enp0s4).
+
 ```qemu-system-x86_64 -machine q35 -name "Ubuntu 25.10" -smp sockets=1,cpus=4 -cpu host -enable-kvm -m 4096 -drive id=disk0,file=ubuntu2510.img,if=none,format=raw -device virtio-scsi-pci -device scsi-hd,drive=disk0 -netdev user,id=nat0 -device e1000,netdev=nat0 -netdev socket,id=priv0,listen=:12345 -device virtio-net-pci,netdev=priv0```
 
 ```
@@ -98,21 +100,18 @@ ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1010000
 > load
 Enter file number: 5
 > exec
-Starting benchmark...
-
---- Results ---
 Iterations: 1000000
-Average: 66 ns
+PACKET: count=0
+NO_PACKET: count=1000000
+ Avg: 66 ns
 > exec
-Starting benchmark...
-
---- Results ---
 Iterations: 1000000
-Average: 67 ns
+PACKET: count=0
+NO_PACKET: count=1000000
+ Avg: 67 ns
 > exec
-Starting benchmark...
-
---- Results ---
 Iterations: 1000000
-Average: 66 ns
+PACKET: count=0
+NO_PACKET: count=1000000
+ Avg: 66 ns
 ```
