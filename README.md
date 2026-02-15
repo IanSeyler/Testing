@@ -84,12 +84,18 @@ Testing was done against the `virtio-net-pci` interface (enp0s4).
 ```
 ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1010000
 ...
+recvfrom() returned PACKET: count=0
+recvfrom() returned NO_PACKET (EAGAIN): count=1000000
  Avg=148.75 ns
 ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1010000
 ...
+recvfrom() returned PACKET: count=0
+recvfrom() returned NO_PACKET (EAGAIN): count=1000000
  Avg=146.86 ns
  ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1010000
 ...
+recvfrom() returned PACKET: count=0
+recvfrom() returned NO_PACKET (EAGAIN): count=1000000
  Avg=148.11 ns
 ian@ubuntu2510:~/Code/Testing$
 ```
