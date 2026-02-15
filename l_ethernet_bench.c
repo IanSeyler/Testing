@@ -41,8 +41,6 @@ typedef struct
 {
 	uint64_t n;
 	uint64_t sum_ns;
-	uint64_t min_ns;
-	uint64_t max_ns;
 } stats_t;
 
 static inline uint64_t ns_now_mono_raw(void)
@@ -61,18 +59,12 @@ static inline void stats_init(stats_t *s)
 {
 	s->n = 0;
 	s->sum_ns = 0;
-	s->min_ns = UINT64_MAX;
-	s->max_ns = 0;
 }
 
 static inline void stats_add(stats_t *s, uint64_t ns)
 {
 	s->n++;
 	s->sum_ns += ns;
-	if (ns < s->min_ns)
-		s->min_ns = ns;
-	if (ns > s->max_ns)
-		s->max_ns = ns;
 }
 
 static void stats_print(const char *label, const stats_t *s)
@@ -83,7 +75,7 @@ static void stats_print(const char *label, const stats_t *s)
 		return;
 	}
 	double avg = (double)s->sum_ns / (double)s->n;
-	printf("%s: count=%" PRIu64 "\n Min=%" PRIu64 " ns\n Max=%" PRIu64 " ns\n Avg=%.2f ns\n", label, s->n, s->min_ns, s->max_ns, avg);
+	printf("%s: count=%" PRIu64 "\n Avg=%.2f ns\n", label, s->n, avg);
 }
 
 static void pin_to_cpu0(void)
