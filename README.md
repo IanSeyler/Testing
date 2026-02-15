@@ -164,6 +164,8 @@ ian@amd:~/Code/Testing$
 
 ## l_ethernet_bench / b_ethernet_bench
 
+### Linux (Ubuntu 25.10)
+
 ```
 ian@amd:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1010000
 ...
@@ -182,3 +184,5 @@ recvfrom() returned NO_PACKET (EAGAIN): count=1000000
  Avg=407.65 ns
 ian@amd:~/Code/Testing$
 ```
+
+### BareMetal (2026.01)
