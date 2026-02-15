@@ -136,6 +136,8 @@ Specs:
 
 ## l_bench1 / b_bench1
 
+bench1 was used as continually reading the time was wasteful for a static loop.
+
 ### Linux (Ubuntu 25.10)
 
 ```
