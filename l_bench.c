@@ -1,6 +1,5 @@
-// gcc -o l_syscall_bench l_syscall_bench.c -lrt
+// gcc -o l_bench l_bench.c -lrt
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
 
@@ -17,11 +16,14 @@ int main()
         	// Record start time
 		clock_gettime(CLOCK_MONOTONIC, &start);
 
-//-------------------------
-/* Code to benchmark */
+		//-------------------------
+		/* Code to benchmark */
+		//-------------------------
 		// Call a kernel function
-//		getpid();
+		// getpid();
+		//-------------------------
 		// __asm__ volatile ("nop");
+		//-------------------------
 		__asm__ volatile (
 			"xor %%eax, %%eax;"
 			"xor %%ecx, %%ecx;"
