@@ -160,7 +160,7 @@ output:
 
 msg_start: db "Starting benchmark...", 13, 10, 13, 10, 0
 msg_result: db "--- Results ---",13, 10, "Iterations: ", 0
-msg_avg: db 13, 10, "Average time: ", 0
+msg_avg: db 13, 10, "Average: ", 0
 msg_ns: db " ns", 0
 msg_err: db "err", 0
 msg_val: db 0
