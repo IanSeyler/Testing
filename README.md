@@ -134,33 +134,57 @@ Specs:
 - Intel X540-T1 10Gbit network card (NICGIGA)
 - Internal 2.5Gbit NIC disabled in BIOS
 
-## l_bench / b_bench
+## l_bench1 / b_bench1
 
 ### Linux (Ubuntu 25.10)
 
 ```
-ian@amd:~/Code/Testing$ ./l_bench
+ian@amd:~/Code/Testing$ ./l_bench1
 Starting benchmark...
 
 --- Results ---
 Iterations: 1000000
-Average: 41.39 ns
-ian@amd:~/Code/Testing$ ./l_bench
+Average: 31.02 ns
+ian@amd:~/Code/Testing$ ./l_bench1
 Starting benchmark...
 
 --- Results ---
 Iterations: 1000000
-Average: 41.54 ns
-ian@amd:~/Code/Testing$ ./l_bench
+Average: 31.14 ns
+ian@amd:~/Code/Testing$ ./l_bench1
 Starting benchmark...
 
 --- Results ---
 Iterations: 1000000
-Average: 41.35 ns
+Average: 31.41 ns
 ian@amd:~/Code/Testing$
 ```
 
 ### BareMetal (2026.01)
+
+```
+> load
+Enter file number: 4
+> exec
+Starting benchmark...
+
+--- Results ---
+Iterations: 1000000
+Average: 27 ns
+> exec
+Starting benchmark...
+
+--- Results ---
+Iterations: 1000000
+Average: 27 ns
+> exec
+Starting benchmark...
+
+--- Results ---
+Iterations: 1000000
+Average: 27 ns
+>
+```
 
 ## l_ethernet_bench / b_ethernet_bench
 
