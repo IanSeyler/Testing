@@ -124,3 +124,16 @@ NO_PACKET: count=1000000
  Avg: 66 ns
 >
 ```
+
+# Physical System (AMD)
+
+Specs:
+- [AMD Ryzen 7 7700X](https://www.amd.com/en/products/processors/desktops/ryzen/7000-series/amd-ryzen-7-7700x.html) - Zen 4 (Raphael) - 8 cores, base 4.50GHz, boost 5.40GHz
+- [ASUS PRIME B650M-A II](https://www.asus.com/motherboards-components/motherboards/csm/prime-b650m-a-ii-csm/)
+- 16GiB RAM (1x 16GiB DDR5) - Max 128GiB
+- Intel 10Gbit network card (Nicgigga?)
+
+## Linux (Ubuntu 25.10)
+
+## BareMetal (2026.01)
+
