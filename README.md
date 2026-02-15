@@ -1,154 +1,73 @@
 Testing repo
 
-# Linux
+# Virtual via KVM
 
-## syscall test - `getpid_bench.c`
-
-### System 1
+Physical system for testing is as follows:
 
 - Framework Desktop
 - AMD RYZEN AI MAX+ 395 w/ Radeon™ 8060S × 32
 - 128.0 GiB RAM
 - Ubuntu 25.10
 
-#### Physical
+## l_bench / b_bench
+
+Executing `cpuid` instruction in a loop.
+
+### Linux (Ubuntu 25.10)
+
+```qemu-system-x86_64 -machine q35 -name "Ubuntu 25.10" -smp sockets=1,cpus=4 -cpu host -enable-kvm -m 4096 -drive id=disk0,file=ubuntu2510.img,if=none,format=raw -device virtio-scsi-pci -device scsi-hd,drive=disk0 -netdev user,id=nat0 -device e1000,netdev=nat0 -netdev socket,id=priv0,listen=:12345 -device virtio-net-pci,netdev=priv0```
 
 ```
+ian@ubuntu2510:~/Code/Testing$ ./l_bench
+Starting benchmark...
+
+--- Results ---
 Iterations: 1000000
-Average: 72.01 ns
-```
+Average: 2270.05 ns
+ian@ubuntu2510:~/Code/Testing$ ./l_bench
+Starting benchmark...
 
-#### Virtual
-
-- Via KVM on physical host
-- 4.0 GiB RAM
-- Ubuntu 25.10
-
-```
+--- Results ---
 Iterations: 1000000
-Average: 76.75 ns
-```
+Average: 2269.85 ns
+ian@ubuntu2510:~/Code/Testing$ ./l_bench
+Starting benchmark...
 
-### System 2
-
-- Framework Laptop
-- 11th Gen Intel® Core™ i5-1135G7 × 8
-- 64.0 GiB RAM
-- Ubuntu 25.10
-
-#### Physical
-
-```
+--- Results ---
 Iterations: 1000000
-Average: 301.41 ns
+Average: 2286.01 ns
+ian@ubuntu2510:~/Code/Testing$
 ```
 
-#### Virtual
+### BareMetal (2026.01)
 
-- Via KVM on physical host
-- 4.0 GiB RAM
-- Ubuntu 25.10
+```qemu-system-x86_64 -machine q35 -name "BareMetal OS" -smp sockets=1,cpus=4 -cpu host -enable-kvm -m 256 -drive id=disk0,file="sys/baremetal_os.img",if=none,format=raw -device ide-hd,drive=disk0 -netdev socket,id=testnet1,connect=localhost:12345 -device virtio-net-pci,netdev=testnet1,mac=10:11:12:00:1A:F4```
 
 ```
+> load
+Enter file number: 4
+> exec
+Starting benchmark...
+
+--- Results ---
 Iterations: 1000000
-Average: 324.15 ns
+Average: 2277 ns
+> exec
+Starting benchmark...
+
+--- Results ---
+Iterations: 1000000
+Average: 2276 ns
+> exec
+Starting benchmark...
+
+--- Results ---
+Iterations: 1000000
+Average: 2279 ns
 ```
 
-## ethernet test - `ethernet_bench.c`
+### Summary
 
-### System 1
+This verified that the benchmarking tool is working correctly on both Linux and BareMetal OS.
 
-Specs as above
-
-#### Physical
-
-```
-Iterations: 1000000 (warmup excluded: 10000)
-Buffer: 2048 bytes
-Total bytes read (successful): 2976228
-Other errors (excluded from stats): 0
-recvfrom() returned PACKET: count=2775
- Min=291 ns
- Max=3126 ns
- Avg=451.91 ns
-recvfrom() returned NO PACKET (EAGAIN): count=987225
- Min=130 ns
- Max=6132 ns
- Avg=141.66 ns
-```
-
-#### Virtual
-
-Specs as above
-
-```
-Iterations: 1000000 (warmup excluded: 10000)
-Buffer: 2048 bytes
-Total bytes read (successful): 1111200
-Other errors (excluded from stats): 0
-recvfrom() returned PACKET: count=946
- Min=210 ns
- Max=13997 ns
- Avg=450.52 ns
-recvfrom() returned NO PACKET (EAGAIN): count=989054
- Min=90 ns
- Max=181300 ns
- Avg=102.48 ns
-```
-
-### System 2
-
-Specs as above
-
-#### Physical
-
-```
-Iterations: 1000000 (warmup excluded: 10000)
-Buffer: 2048 bytes
-Total bytes read (successful): 646721
-Other errors (excluded from stats): 0
-recvfrom() returned PACKET: count=608
- Min=1288 ns
- Max=8239 ns
- Avg=2681.97 ns
-recvfrom() returned NO PACKET (EAGAIN): count=989392
- Min=412 ns
- Max=26648 ns
- Avg=488.27 ns
-```
-
-#### Virtual
-
-Specs as above
-
-```
-Iterations: 1000000 (warmup excluded: 10000)
-Buffer: 2048 bytes
-Total bytes read (successful): 467760
-Other errors (excluded from stats): 0
-recvfrom() returned PACKET: count=429
- Min=1349 ns
- Max=14551 ns
- Avg=1976.63 ns
-recvfrom() returned NO PACKET (EAGAIN): count=989571
- Min=449 ns
- Max=133626 ns
- Avg=492.44 ns
-```
-
-# BareMetal
-
-## syscall test - `sys_test.asm`
-
-### System 2
-
-- Framework Laptop
-- 11th Gen Intel® Core™ i5-1135G7 × 8
-- 64.0 GiB RAM
-- BareMetal 2026.01
-
-#### Physical
-
-```
-32 ns
-```
+## l_ethernet_bench / b_ethernet_bench

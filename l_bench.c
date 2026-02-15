@@ -28,9 +28,9 @@ int main()
 			"xor %%eax, %%eax;"
 			"xor %%ecx, %%ecx;"
 			"cpuid"
-			:
-			:
-			: "%eax", "%ecx"
+			: // output
+			: // input
+			: "%eax", "%ebx", "%ecx", "%edx" // clobbered registers
 		);
 		//-------------------------
 
@@ -50,8 +50,6 @@ int main()
 	// Display results
 	printf("\n--- Results ---\n");
 	printf("Iterations: %d\n", iterations);
-//	printf("Min: %lld ns\n", min_ns);
-//	printf("Max: %lld ns\n", max_ns);
 	printf("Average: %.2f ns\n", avg_ns);
 
 	return 0;

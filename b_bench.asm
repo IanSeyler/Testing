@@ -16,15 +16,6 @@ start:					; Start of program label
 	; Number of iterations
 	mov r11, 1000000
 
-	; Gather timer to timer delay
-	mov ecx, TIMECOUNTER
-	call [b_system]
-	mov r8, rax
-	call [b_system]
-	mov r9, rax
-	mov r15, rax
-	sub r15, r8			; R10 contains timer to timer delay
-
 	mov r12, r11			; Iterations
 	xor r14, r14			; Cumulative time
 	xor r13, r13			; Bytes counter (for network test)
@@ -48,8 +39,6 @@ loop1:
 	xor ecx, ecx
 	cpuid
 ;-------------------------
-;	nop
-;-------------------------
 
 	; Gather end time of iteration
 	mov ecx, TIMECOUNTER
@@ -62,7 +51,6 @@ loop1:
 
 	; Calculate elapsed time
 	sub r9, r8			; end time (t1) - start time (t0)
-;	sub r9, r10			; subtract timer delay calculated earlier
 
 	add r14, r9			; Add elapsed time to cumulative time
 	dec r12				; Decrement iterations counter
