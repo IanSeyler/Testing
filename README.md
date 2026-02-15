@@ -64,6 +64,7 @@ Starting benchmark...
 --- Results ---
 Iterations: 1000000
 Average: 2279 ns
+>
 ```
 
 ### Summary
@@ -90,6 +91,7 @@ ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1010000
  ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1010000
 ...
  Avg=148.11 ns
+ian@ubuntu2510:~/Code/Testing$
 ```
 
 ### BareMetal (2026.01)
@@ -114,4 +116,5 @@ Iterations: 1000000
 PACKET: count=0
 NO_PACKET: count=1000000
  Avg: 66 ns
+>
 ```
