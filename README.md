@@ -19,21 +19,12 @@ Executing `cpuid` instruction in a loop.
 
 ```
 ian@ubuntu2510:~/Code/Testing$ ./l_bench
-Starting benchmark...
-
---- Results ---
 Iterations: 1000000
 Average: 2270.05 ns
 ian@ubuntu2510:~/Code/Testing$ ./l_bench
-Starting benchmark...
-
---- Results ---
 Iterations: 1000000
 Average: 2269.85 ns
 ian@ubuntu2510:~/Code/Testing$ ./l_bench
-Starting benchmark...
-
---- Results ---
 Iterations: 1000000
 Average: 2286.01 ns
 ian@ubuntu2510:~/Code/Testing$
@@ -47,23 +38,14 @@ ian@ubuntu2510:~/Code/Testing$
 > load
 Enter file number: 4
 > exec
-Starting benchmark...
-
---- Results ---
 Iterations: 1000000
-Average: 2286 ns
+Average: 2231 ns
 > exec
-Starting benchmark...
-
---- Results ---
 Iterations: 1000000
-Average: 2268 ns
+Average: 2236 ns
 > exec
-Starting benchmark...
-
---- Results ---
 Iterations: 1000000
-Average: 2273 ns
+Average: 2217 ns
 >
 ```
 
@@ -82,21 +64,18 @@ Testing was done against the `virtio-net-pci` interface (enp0s4).
 ```qemu-system-x86_64 -machine q35 -name "Ubuntu 25.10" -smp sockets=1,cpus=4 -cpu host -enable-kvm -m 4096 -drive id=disk0,file=ubuntu2510.img,if=none,format=raw -device virtio-scsi-pci -device scsi-hd,drive=disk0 -netdev user,id=nat0 -device e1000,netdev=nat0 -netdev socket,id=priv0,listen=:12345 -device virtio-net-pci,netdev=priv0```
 
 ```
-ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1010000
-...
-recvfrom() returned PACKET: count=0
-recvfrom() returned NO_PACKET (EAGAIN): count=1000000
- Avg=148.75 ns
-ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1010000
-...
-recvfrom() returned PACKET: count=0
-recvfrom() returned NO_PACKET (EAGAIN): count=1000000
- Avg=146.86 ns
-ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1010000
-...
-recvfrom() returned PACKET: count=0
-recvfrom() returned NO_PACKET (EAGAIN): count=1000000
- Avg=148.11 ns
+ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1000000
+Iterations: 1000000
+Average: 120.82 ns
+Bytes received: 0
+ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1000000
+Iterations: 1000000
+Average: 121.37 ns
+Bytes received: 0
+ian@ubuntu2510:~/Code/Testing$ sudo ./l_ethernet_bench enp0s4 -n 1000000
+Iterations: 1000000
+Average: 120.36 ns
+Bytes received: 0
 ian@ubuntu2510:~/Code/Testing$
 ```
 
@@ -109,19 +88,16 @@ ian@ubuntu2510:~/Code/Testing$
 Enter file number: 5
 > exec
 Iterations: 1000000
-PACKET: count=0
-NO_PACKET: count=1000000
- Avg: 66 ns
+Average: 13 ns
+Bytes received: 0
 > exec
 Iterations: 1000000
-PACKET: count=0
-NO_PACKET: count=1000000
- Avg: 67 ns
+Average: 14 ns
+Bytes received: 0
 > exec
 Iterations: 1000000
-PACKET: count=0
-NO_PACKET: count=1000000
- Avg: 66 ns
+Average: 13 ns
+Bytes received: 0
 >
 ```
 
@@ -134,58 +110,18 @@ Specs:
 - Intel X540-T1 10Gbit network card (NICGIGA)
 - Internal 2.5Gbit NIC disabled in BIOS
 
-## l_bench1 / b_bench1
-
-bench1 was used as continually reading the time was wasteful for a static loop.
+## l_bench / b_bench
 
 ### Linux (Ubuntu 25.10)
 
 ```
-ian@amd:~/Code/Testing$ ./l_bench1
-Starting benchmark...
 
---- Results ---
-Iterations: 1000000
-Average: 31.02 ns
-ian@amd:~/Code/Testing$ ./l_bench1
-Starting benchmark...
-
---- Results ---
-Iterations: 1000000
-Average: 31.14 ns
-ian@amd:~/Code/Testing$ ./l_bench1
-Starting benchmark...
-
---- Results ---
-Iterations: 1000000
-Average: 31.41 ns
-ian@amd:~/Code/Testing$
 ```
 
 ### BareMetal (2026.01)
 
 ```
-> load
-Enter file number: 4
-> exec
-Starting benchmark...
 
---- Results ---
-Iterations: 1000000
-Average: 27 ns
-> exec
-Starting benchmark...
-
---- Results ---
-Iterations: 1000000
-Average: 27 ns
-> exec
-Starting benchmark...
-
---- Results ---
-Iterations: 1000000
-Average: 27 ns
->
 ```
 
 ## l_ethernet_bench / b_ethernet_bench
@@ -193,22 +129,13 @@ Average: 27 ns
 ### Linux (Ubuntu 25.10)
 
 ```
-ian@amd:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1010000
-...
-recvfrom() returned PACKET: count=0
-recvfrom() returned NO_PACKET (EAGAIN): count=1000000
- Avg=408.72 ns
-ian@amd:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1010000
-...
-recvfrom() returned PACKET: count=0
-recvfrom() returned NO_PACKET (EAGAIN): count=1000000
- Avg=408.15 ns
-ian@amd:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1010000
-...
-recvfrom() returned PACKET: count=0
-recvfrom() returned NO_PACKET (EAGAIN): count=1000000
- Avg=407.65 ns
-ian@amd:~/Code/Testing$
+
 ```
 
 ### BareMetal (2026.01)
+
+```
+
+```
+
+// EOF
