@@ -115,13 +115,33 @@ Specs:
 ### Linux (Ubuntu 25.10)
 
 ```
-
+ian@amd:~/Code/Testing$ ./l_bench
+Iterations: 1000000
+Average: 31.20 ns
+ian@amd:~/Code/Testing$ ./l_bench
+Iterations: 1000000
+Average: 31.20 ns
+ian@amd:~/Code/Testing$ ./l_bench
+Iterations: 1000000
+Average: 31.21 ns
+ian@amd:~/Code/Testing$
 ```
 
 ### BareMetal (2026.01)
 
 ```
-
+> loadr
+Enter file number: 4
+> exec
+Iterations: 1000000
+Average: 27 ns
+> exec
+Iterations: 1000000
+Average: 27 ns
+> exec
+Iterations: 1000000
+Average: 27 ns
+>
 ```
 
 ## l_ethernet_bench / b_ethernet_bench
@@ -129,13 +149,39 @@ Specs:
 ### Linux (Ubuntu 25.10)
 
 ```
-
+ian@amd:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1000000
+Iterations: 1000000
+Average: 389.97 ns
+Bytes received: 0
+ian@amd:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1000000
+Iterations: 1000000
+Average: 390.19 ns
+Bytes received: 0
+ian@amd:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1000000
+Iterations: 1000000
+Average: 390.24 ns
+Bytes received: 0
+ian@amd:~/Code/Testing$
 ```
 
 ### BareMetal (2026.01)
 
 ```
-
+> loadr
+Enter file number: 5
+> exec
+Iterations: 1000000
+Average: 1 ns
+Bytes received: 0
+> exec
+Iterations: 1000000
+Average: 2 ns
+Bytes received: 0
+> exec
+Iterations: 1000000
+Average: 1 ns
+Bytes received: 0
+>
 ```
 
 // EOF
