@@ -107,8 +107,9 @@ Specs:
 - [AMD Ryzen 7 7700X](https://www.amd.com/en/products/processors/desktops/ryzen/7000-series/amd-ryzen-7-7700x.html) - Zen 4 (Raphael) - 8 cores, base 4.50GHz, boost 5.40GHz
 - [ASUS PRIME B650M-A II](https://www.asus.com/motherboards-components/motherboards/csm/prime-b650m-a-ii-csm/)
 - 16GiB RAM (1x 16GiB DDR5) - Max 128GiB
+- 128GB NVMe (Patriot)
 - Intel X540-T1 10Gbit network card (NICGIGA)
-- Internal 2.5Gbit NIC disabled in BIOS
+- Internal network adaptor disabled in BIOS
 
 ## l_bench / b_bench
 
@@ -183,5 +184,89 @@ Average: 1 ns
 Bytes received: 0
 >
 ```
+
+# Physical System (Intel)
+
+Specs:
+- [Intel® Core™ i5-12400](https://ark.intel.com/content/www/us/en/ark/products/134586/intel-core-i5-12400-processor-18m-cache-up-to-4-40-ghz.html) - Alder Lake - 6 cores, base 2.50GHz, boost 4.40GHz
+- [ASUS PRIME B760M-A AX](https://www.asus.com/us/motherboards-components/motherboards/prime/prime-b760m-a-ax/)
+- 16GiB RAM (1x 16GiB DDR5) - Max 128GiB
+- Intel X540-T1 10Gbit network card (Beijing Sinead)
+- Internal network adaptors disabled in BIOS
+
+## l_bench / b_bench
+
+### Linux (Ubuntu 25.10)
+
+```
+ian@intel:~/Code/Testing$ ./l_bench
+Iterations: 1000000
+Average: 33.14 ns
+ian@intel:~/Code/Testing$ ./l_bench
+Iterations: 1000000
+Average: 32.01 ns
+ian@intel:~/Code/Testing$ ./l_bench
+Iterations: 1000000
+Average: 32.64 ns
+ian@intel:~/Code/Testing$
+```
+
+### BareMetal (2026.01)
+
+```
+> loadr
+Enter file number: 4
+> exec
+Iterations: 1000000
+Average: 31 ns
+> exec
+Iterations: 1000000
+Average: 31 ns
+> exec
+Iterations: 1000000
+Average: 31 ns
+>
+```
+
+## l_ethernet_bench / b_ethernet_bench
+
+### Linux (Ubuntu 25.10)
+
+```
+ian@intel:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1000000
+Iterations: 1000000
+Average: 126.76 ns
+Bytes received: 0
+ian@intel:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1000000
+Iterations: 1000000
+Average: 123.26 ns
+Bytes received: 0
+ian@intel:~/Code/Testing$ sudo ./l_ethernet_bench enp1s0 -n 1000000
+Iterations: 1000000
+Average: 124.14 ns
+Bytes received: 0
+ian@intel:~/Code/Testing$
+```
+
+### BareMetal (2026.01)
+
+```
+> loadr
+Enter file number: 5
+> exec
+Iterations: 1000000
+Average: 1 ns
+Bytes received: 0
+> exec
+Iterations: 1000000
+Average: 1 ns
+Bytes received: 0
+> exec
+Iterations: 1000000
+Average: 1 ns
+Bytes received: 0
+>
+```
+
 
 // EOF
