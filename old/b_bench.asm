@@ -10,67 +10,76 @@ DEFAULT ABS
 %INCLUDE "libBareMetal.asm"
 
 start:					; Start of program label
-	; Number of iterations
-	mov r15, 1000000
-
-	; Display iterations
 	lea rsi, [rel msg_start]
 	call output
-	mov rax, r15
+
+	; Number of iterations
+	mov r11, 1000000
+
+	mov r12, r11			; Iterations
+	xor r14, r14			; Cumulative time
+	xor r13, r13			; Bytes counter (for network test)
+
+loop1:
+	; Gather start time of iteration
+	mov ecx, TIMECOUNTER
+	call [b_system]
+	mov r8, rax			; t0
+
+;-------------------------
+; Code to benchmark
+;-------------------------
+;	mov ecx, FREE_MEMORY
+;	call [b_system]
+;-------------------------
+;	call [b_net_rx]
+;	add r13, rcx
+;-------------------------
+	xor eax, eax
+	xor ecx, ecx
+	cpuid
+;-------------------------
+
+	; Gather end time of iteration
+	mov ecx, TIMECOUNTER
+	call [b_system]
+	mov r9, rax			; t1
+
+	; Check for start time > end time
+	cmp r9, r8			; t0 > t1?
+	jb error
+
+	; Calculate elapsed time
+	sub r9, r8			; end time (t1) - start time (t0)
+
+	add r14, r9			; Add elapsed time to cumulative time
+	dec r12				; Decrement iterations counter
+	cmp r12, 0			; 0 yet?
+	jne loop1			; If not, continue loop
+
+	; Divide cumulative time by iterations
+	xor edx, edx
+	mov rax, r14
+	mov rcx, r11
+	div rcx				; RDX:RAX / RCX (quotient in RAX, remainder in RDX)
+	push rax
+
+;	ud2				; Dump registers
+	lea rsi, [rel msg_result]
+	call output
+	mov rax, r11
 	mov rdi, msg_val
 	call os_int_to_string
 	mov rsi, msg_val
 	call output
 	lea rsi, [rel msg_avg]
 	call output
-
-	; Set variables
-	mov r12, r15			; Iteration decrement counter
-	xor r11, r11			; Packets received
-
-	; Gather start time in ns since system start
-	mov ecx, TIMECOUNTER
-	call [b_system]
-	mov r8, rax			; t0
-
-bench_loop:
-;-------------------------
-; Code to benchmark
-;-------------------------
-	call [b_net_rx]			; Returns # of bytes in rcx, packet location in rdi
-	add r11, rcx
-;-------------------------
-
-	dec r12				; Decrement iterations counter
-	cmp r12, 0			; 0 yet?
-	jne bench_loop			; If not, continue loop
-
-	; Gather end time in ns since system start
-	mov ecx, TIMECOUNTER
-	call [b_system]
-	mov r9, rax			; t1
-
-	; Calculate elapsed time
-	sub r9, r8			; end time (t1) - start time (t0)
-
-	; Divide packet time by packet and display average
-	xor edx, edx
-	mov rax, r9
-	div r15				; RDX:RAX / R15 (quotient in RAX, remainder in RDX)
+	pop rax
 	mov rdi, msg_val
 	call os_int_to_string
 	mov rsi, msg_val
 	call output
 	lea rsi, [rel msg_ns]
-	call output
-
-	; Display bytes received
-	lea rsi, [rel msg_bytes]
-	call output
-	mov rax, r11
-	mov rdi, msg_val
-	call os_int_to_string
-	mov rsi, msg_val
 	call output
 
 	ret
@@ -156,11 +165,9 @@ output:
 ; -----------------------------------------------------------------------------
 
 
-msg_start: db "Iterations: ", 0
-;msg_packet: db 13, 10, "PACKET: count=", 0
-;msg_nopacket: db 13, 10, "NO PACKET: count=", 0
+msg_start: db "Starting benchmark...", 13, 10, 13, 10, 0
+msg_result: db "--- Results ---",13, 10, "Iterations: ", 0
 msg_avg: db 13, 10, "Average: ", 0
 msg_ns: db " ns", 0
-msg_bytes: db 13, 10, "Bytes received: ", 0
 msg_err: db "err", 0
 msg_val: db 0

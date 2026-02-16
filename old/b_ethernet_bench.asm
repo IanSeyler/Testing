@@ -14,58 +14,107 @@ start:					; Start of program label
 	call output
 
 	; Number of iterations
-	mov r11, 1000000
+	mov r15, 1000000
 
-	mov r12, r11			; Iterations
-	xor r14, r14			; Cumulative time
-	xor r13, r13			; Bytes counter (for network test)
+	mov r12, r15			; Iteration decrement counter
+	xor r14, r14			; Cumulative time packet
+	xor r13, r13			; Cumulative time no packet
+	xor r11, r11			; Packets received
+	xor r10, r10			; Calls with no packet
 
+loop1:
 	; Gather start time of iteration
 	mov ecx, TIMECOUNTER
 	call [b_system]
 	mov r8, rax			; t0
 
-loop1:
 ;-------------------------
-	xor eax, eax
-	xor ecx, ecx
-	cpuid
+; Code to benchmark
 ;-------------------------
-	dec r12
-	cmp r12, 0
-	jne loop1
+	call [b_net_rx]			; Returns # of bytes in rcx, packet location in rdi
+;-------------------------
 
 	; Gather end time of iteration
 	mov ecx, TIMECOUNTER
 	call [b_system]
 	mov r9, rax			; t1
 
+	; Check for start time > end time
+	cmp r9, r8			; t0 > t1?
+	jb error
+
 	; Calculate elapsed time
 	sub r9, r8			; end time (t1) - start time (t0)
 
-	; Divide cumulative time by iterations
-	xor edx, edx
-	mov rax, r9
-	mov rcx, r11
-	div rcx				; RDX:RAX / RCX (quotient in RAX, remainder in RDX)
-	push rax
+	cmp rcx, 0			; Bytes received?
+	jne got_packet
 
-	lea rsi, [rel msg_result]
+	jmp skip_packet
+
+got_packet:
+	add r14, r9			; Add elapsed time to packet cumulative time
+	inc r11				; Increment packets received
+	jmp packet_end
+
+skip_packet:
+	add r13, r9			; Add elapsed time to no packet cumulative time
+	inc r10				; Increment calls with no packet
+
+packet_end:
+	dec r12				; Decrement iterations counter
+	cmp r12, 0			; 0 yet?
+	jne loop1			; If not, continue loop
+
+	; Display results
+	lea rsi, [rel msg_packet]
 	call output
 	mov rax, r11
 	mov rdi, msg_val
 	call os_int_to_string
 	mov rsi, msg_val
 	call output
+	cmp r11, 0
+	je skip_packet_ns
 	lea rsi, [rel msg_avg]
 	call output
-	pop rax
+
+	; Divide packet time by packet
+	xor edx, edx
+	mov rax, r14
+	div r11				; RDX:RAX / R11 (quotient in RAX, remainder in RDX)
+	mov rdi, msg_val
+	call os_int_to_string
+	mov rsi, msg_val
+	call output
+
+	lea rsi, [rel msg_ns]
+	call output
+
+skip_packet_ns:
+
+	lea rsi, [rel msg_nopacket]
+	call output
+	mov rax, r10
+	mov rdi, msg_val
+	call os_int_to_string
+	mov rsi, msg_val
+	call output
+	cmp r10, 0
+	je skip_nopacket_ns
+	lea rsi, [rel msg_avg]
+	call output
+	; Divide no_packet time by no_packet
+	xor edx, edx
+	mov rax, r13
+	div r10				; RDX:RAX / R10 (quotient in RAX, remainder in RDX)
 	mov rdi, msg_val
 	call os_int_to_string
 	mov rsi, msg_val
 	call output
 	lea rsi, [rel msg_ns]
 	call output
+
+skip_nopacket_ns:
 
 	ret
 
@@ -150,9 +199,10 @@ output:
 ; -----------------------------------------------------------------------------
 
 
-msg_start: db "Starting benchmark...", 13, 10, 13, 10, 0
-msg_result: db "--- Results ---",13, 10, "Iterations: ", 0
-msg_avg: db 13, 10, "Average: ", 0
+msg_start: db "Iterations: ", 0
+msg_packet: db 13, 10, "PACKET: count=", 0
+msg_nopacket: db 13, 10, "NO PACKET: count=", 0
+msg_avg: db 13, 10, " Avg: ", 0
 msg_ns: db " ns", 0
 msg_err: db "err", 0
 msg_val: db 0
