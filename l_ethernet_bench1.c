@@ -37,47 +37,6 @@
 #include <time.h>
 #include <unistd.h>
 
-typedef struct
-{
-	uint64_t n;
-	uint64_t sum_ns;
-} stats_t;
-
-static inline uint64_t ns_now_mono_raw(void)
-{
-	struct timespec ts;
-	// CLOCK_MONOTONIC_RAW is best for measurement (no NTP slewing adjustments).
-	if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts) != 0)
-	{
-		perror("clock_gettime");
-		exit(1);
-	}
-	return (uint64_t)ts.tv_sec * 1000000000ull + (uint64_t)ts.tv_nsec;
-}
-
-static inline void stats_init(stats_t *s)
-{
-	s->n = 0;
-	s->sum_ns = 0;
-}
-
-static inline void stats_add(stats_t *s, uint64_t ns)
-{
-	s->n++;
-	s->sum_ns += ns;
-}
-
-static void stats_print(const char *label, const stats_t *s)
-{
-	if (s->n == 0)
-	{
-		printf("%s: count=0\n", label);
-		return;
-	}
-	double avg = (double)s->sum_ns / (double)s->n;
-	printf("%s: count=%" PRIu64 "\n Avg=%.2f ns\n", label, s->n, avg);
-}
-
 static void pin_to_cpu0(void)
 {
 	cpu_set_t set;
@@ -118,8 +77,7 @@ static void usage(const char *prog)
 		"Usage: %s <ifname> [-n iterations] [-b buflen] [-w warmup]\n"
 		"  <ifname>         Interface name (e.g., eth0)\n"
 		"  -n iterations    Total recvfrom() attempts (default 1000000)\n"
-		"  -b buflen        Receive buffer size (default 2048)\n"
-		"  -w warmup        Warmup iterations excluded from stats (default 10000)\n",
+		"  -b buflen        Receive buffer size (default 2048)\n",
 		prog);
 	exit(2);
 }
@@ -132,8 +90,10 @@ int main(int argc, char **argv)
 		const char *ifname = argv[1];
 
 	uint64_t iterations = 1000000;
-	uint64_t warmup = 10000;
+	uint64_t bytes = 0;
 	size_t buflen = 2048;
+
+	printf("Iterations: %d\n", (int)iterations);
 
 	for (int i = 2; i < argc; i++)
 	{
@@ -145,18 +105,11 @@ int main(int argc, char **argv)
 		{
 			buflen = (size_t)strtoull(argv[++i], NULL, 10);
 		}
-		else if (!strcmp(argv[i], "-w") && i + 1 < argc)
-		{
-			warmup = strtoull(argv[++i], NULL, 10);
-		}
 		else
 		{
 			usage(argv[0]);
 		}
 	}
-
-	if (warmup > iterations)
-		warmup = iterations;
 
 	// Process tuning to reduce jitter.
 	pin_to_cpu0();
@@ -206,13 +159,6 @@ int main(int argc, char **argv)
 	int rcvbuf = 4 * 1024 * 1024;
 	setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &rcvbuf, sizeof(rcvbuf));
 
-	stats_t got_pkt, no_pkt;
-	stats_init(&got_pkt);
-	stats_init(&no_pkt);
-
-	uint64_t other_err = 0;
-	uint64_t bytes_total = 0;
-
 	struct sockaddr_ll from;
 	socklen_t fromlen = sizeof(from);
 
@@ -224,7 +170,12 @@ int main(int argc, char **argv)
 	{
 		fromlen = sizeof(from);
 		ssize_t r = recvfrom(fd, buf, buflen, MSG_DONTWAIT, (struct sockaddr *)&from, &fromlen);
+		if (r > 0)
+		{
+			bytes += (uint64_t)r;
+		}
 	}
+
 	// Record end time
 	clock_gettime(CLOCK_MONOTONIC, &end);
 
@@ -235,9 +186,8 @@ int main(int argc, char **argv)
 	double avg_ns = (double)total_ns / iterations;
 
 	// Display results
-	printf("\n--- Results ---\n");
-	printf("Iterations: %d\n", (int)iterations);
 	printf("Average: %.2f ns\n", avg_ns);
+	printf("Bytes received: %lu\n", bytes);
 
 	close(fd);
 	free(buf);
